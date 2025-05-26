@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *.pyo
-*.pyc
-*.pyd
 
 # Entornos virtuales
 env/
@@ -13,6 +11,8 @@ ENV/
 env.bak/
 *.env/
 cve_env/
+lib/
+Lib/
 
 # Archivos de entorno y contraseñas
 .env
@@ -52,7 +52,3 @@ coverage.xml
 # Archivos de sistema operativo
 .DS_Store
 Thumbs.db
-
-# Plantillas de entorno
-.env.example
-
