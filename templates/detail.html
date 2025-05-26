@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalle de {{ entry.cve_id }}</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; background: #f8fafb; }
+    h1 { color: #007acc; }
+    .info { background: #fff; border-radius: 8px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.07); margin-bottom: 2rem; }
+    .meta { font-size: 1rem; color: #666; margin-bottom: 0.5rem; }
+    .severity { font-weight: bold; font-size: 1.1rem; }
+    .score { margin-left: 1.5rem; }
+    .description { margin: 1.5rem 0 1.5rem 0; }
+    .products { margin-top: 2rem; }
+    .product-list { margin: 0.5rem 0 0 0; }
+    .product-list li { margin-bottom: 0.2rem; font-size: 1rem; }
+    a { color: #007acc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back { margin-bottom: 1rem; display: inline-block; }
+    .label { color: #555; font-size: 0.95rem; margin-right: 0.2rem;}
+    .box { display: inline-block; padding: 0.15rem 0.5rem; background: #f1f5f9; border-radius: 4px; margin-right: 0.5rem;}
+    .source-link { font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <a href="/" class="back">← Volver al listado</a>
+  <h1>Detalle de <span class="cve-id">{{ entry.cve_id }}</span></h1>
+  <div class="info">
+    <div class="meta">
+      <span class="label">Fecha de publicación:</span>
+      <span class="box">
+        {{ entry.published_date.strftime("%Y-%m-%d %H:%M") if entry.published_date else "Desconocida" }}
+      </span>
+      <span class="label">Última modificación:</span>
+      <span class="box">
+        {{ entry.last_modified.strftime("%Y-%m-%d %H:%M") if entry.last_modified else "Desconocida" }}
+      </span>
+    </div>
+    <div class="meta">
+      <span class="label">Severidad:</span>
+      <span class="box severity">{{ entry.severity_v3 or "Sin datos" }}</span>
+      {% if entry.cvss_score_v3 %}
+        <span class="label">CVSS v3.1:</span>
+        <span class="box score">{{ entry.cvss_score_v3 }}</span>
+        <span class="label">Vector:</span>
+        <span class="box score">{{ entry.cvss_vector_v3 }}</span>
+      {% endif %}
+      {% if entry.cvss_score_v4 %}
+        <br><span class="label">CVSS v4.0:</span>
+        <span class="box score">{{ entry.cvss_score_v4 }}</span>
+        <span class="label">Vector:</span>
+        <span class="box score">{{ entry.cvss_vector_v4 }}</span>
+      {% endif %}
+    </div>
+    <div class="meta">
+      <span class="label">Estado:</span>
+      <span class="box">{{ entry.status or "Desconocido" }}</span>
+      <span class="label">Fuente:</span>
+      <span class="box">{{ entry.source or "Desconocida" }}</span>
+    </div>
+    <div class="description">
+      <strong>Descripción (EN):</strong>
+      <div>{{ entry.description_en or "No disponible" }}</div>
+      {% if entry.description_es %}
+        <br>
+        <strong>Descripción (ES):</strong>
+        <div>{{ entry.description_es }}</div>
+      {% endif %}
+    </div>
+    <div>
+      <a href="{{ entry.source_link }}" target="_blank" class="source-link">Ver en NVD</a>
+    </div>
+  </div>
+
+  <div class="products">
+    <strong>Productos afectados:</strong>
+    {% if products and products|length > 0 %}
+      <ul class="product-list">
+        {% for prod in products %}
+          <li>
+            {{ prod.vendor or "?" }} / {{ prod.product or "?" }} {% if prod.version %}- versión: {{ prod.version }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <span style="color:#888;">No hay información sobre productos afectados.</span>
+    {% endif %}
+  </div>
+</body>
+</html>
+

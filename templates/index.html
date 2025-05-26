@@ -24,29 +24,40 @@
       padding: 0.5rem;
       font-size: 1rem;
     }
-    ul {
-      list-style-type: none;
-      padding: 0;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      margin-top: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
     }
-    li {
-      background-color: #fff;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      border-left: 6px solid #007acc;
-      border-radius: 4px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: 1rem;
+    }
+    th {
+      background: #f3f7fa;
+      color: #226;
+    }
+    tr:last-child td {
+      border-bottom: none;
     }
     .cve-id {
       font-weight: bold;
-      font-size: 1.1rem;
       color: #007acc;
     }
     .meta {
-      font-size: 0.9rem;
-      color: #666;
+      font-size: 0.93rem;
+      color: #555;
     }
-    .description {
-      margin-top: 0.5rem;
+    .desc {
+      font-size: 1rem;
+      color: #222;
+      max-width: 40vw;
+      white-space: pre-line;
+      word-break: break-word;
     }
     a {
       text-decoration: none;
@@ -54,6 +65,16 @@
     }
     a:hover {
       text-decoration: underline;
+    }
+    .tag {
+      display: inline-block;
+      padding: 0.2em 0.7em;
+      border-radius: 1em;
+      font-size: 0.95em;
+      background: #e6f2fa;
+      color: #007acc;
+      margin-right: 0.6em;
+      margin-bottom: 0.1em;
     }
   </style>
 </head>
@@ -88,24 +109,48 @@
   <h2>Resultados</h2>
 
   {% if results %}
-    <ul>
-      {% for row in results %}
-        <li>
-          <div class="cve-id">{{ row.cve_id }}</div>
-          <div class="meta">
-            {{ row.severity_v3 or "Sin severidad" }} |
-            {{ row.cvss_score_v3 or "Sin puntuación" }} |
-            {{ row.published_date.strftime("%Y-%m-%d") if row.published_date else "Sin fecha" }}
-          </div>
-          <div class="description">
-            {{ row.description_en[:300] }}...
-          </div>
-          <div>
-            <a href="{{ row.source_link }}" target="_blank">Ver en NVD</a>
-          </div>
-        </li>
-      {% endfor %}
-    </ul>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Severidad</th>
+          <th>Puntuación</th>
+          <th>Fecha</th>
+          <th>Producto</th>
+          <th>Descripción</th>
+          <th>Detalles</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in results %}
+          <tr>
+            <td class="cve-id">{{ row.cve_id }}</td>
+            <td>
+              {% if row.severity_v3 %}
+                <span class="tag">{{ row.severity_v3 }}</span>
+              {% else %}
+                <span class="tag" style="background:#eee;color:#888">Sin severidad</span>
+              {% endif %}
+            </td>
+            <td>{{ row.cvss_score_v3 if row.cvss_score_v3 else '-' }}</td>
+            <td>
+              {{ row.published_date.strftime("%Y-%m-%d") if row.published_date else "Sin fecha" }}
+            </td>
+            <td>
+              {{ row.product if row.product else '-' }}
+              {# Si no traes producto, deja este campo vacío o haz JOIN en SQL #}
+            </td>
+            <td class="desc">
+              {{ row.description_en[:170] }}{% if row.description_en and row.description_en|length > 170 %}...{% endif %}
+            </td>
+            <td>
+              <a href="/cve/{{ row.cve_id }}">Ver detalles</a> | 
+              <a href="{{ row.source_link }}" target="_blank">NVD</a>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   {% else %}
     <p>No se encontraron resultados.</p>
   {% endif %}
