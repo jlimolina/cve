@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Explorador de CVEs</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      color: #333;
+    }
+    form {
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 6px;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 2rem;
+    }
+    input, select, button {
+      margin-right: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      background-color: #fff;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-left: 6px solid #007acc;
+      border-radius: 4px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    .cve-id {
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: #007acc;
+    }
+    .meta {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .description {
+      margin-top: 0.5rem;
+    }
+    a {
+      text-decoration: none;
+      color: #007acc;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔍 Explorador de Vulnerabilidades CVE</h1>
+
+  <form method="get">
+    <label>
+      Buscar:
+      <input type="text" name="q" value="{{ q }}">
+    </label>
+    <label>
+      Severidad:
+      <select name="severity">
+        <option value="">-- Todas --</option>
+        {% for s in ['LOW', 'MEDIUM', 'HIGH', 'CRITICAL'] %}
+          <option value="{{ s }}" {% if severity == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>
+      Año:
+      <input type="number" name="year" value="{{ year or '' }}" min="1999" max="2025">
+    </label>
+    <label>
+      Producto:
+      <input type="text" name="product" value="{{ product or '' }}">
+    </label>
+    <button type="submit">Filtrar</button>
+  </form>
+
+  <h2>Resultados</h2>
+
+  {% if results %}
+    <ul>
+      {% for row in results %}
+        <li>
+          <div class="cve-id">{{ row.cve_id }}</div>
+          <div class="meta">
+            {{ row.severity_v3 or "Sin severidad" }} |
+            {{ row.cvss_score_v3 or "Sin puntuación" }} |
+            {{ row.published_date.strftime("%Y-%m-%d") if row.published_date else "Sin fecha" }}
+          </div>
+          <div class="description">
+            {{ row.description_en[:300] }}...
+          </div>
+          <div>
+            <a href="{{ row.source_link }}" target="_blank">Ver en NVD</a>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No se encontraron resultados.</p>
+  {% endif %}
+
+</body>
+</html>
+

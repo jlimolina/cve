@@ -1,0 +1,58 @@
+# Python bytecode y cachés
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyc
+*.pyd
+
+# Entornos virtuales
+env/
+.venv/
+venv/
+ENV/
+env.bak/
+*.env/
+cve_env/
+
+# Archivos de entorno y contraseñas
+.env
+.env.*
+
+# Archivos de configuración de editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Archivos temporales
+*.log
+*.tmp
+*.swp
+
+# Salidas de test y cobertura
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Descargas y datos externos
+*.zip
+*.json
+*.gz
+
+# Jupyter Notebooks checkpoints (si usas notebooks)
+.ipynb_checkpoints/
+
+# Archivos de sistema operativo
+.DS_Store
+Thumbs.db
+
+# Plantillas de entorno
+.env.example
+
